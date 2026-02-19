@@ -57,4 +57,30 @@ An Intelligent AI-Based Smart Education System designed to provide personalized 
 
 ## 📂 Project Structure
 
+NeuroNetics-SmartEdu/
+│
+├── backend/
+│   ├── main.py                 # FastAPI application (all API endpoints)
+│   └── requirements.txt        # Python dependencies
+│
+├── frontend/
+│   ├── index.html              # React single-file entry point
+│   └── src/
+│       ├── pages/
+│       │   ├── StudentDashboard.jsx   # Student dashboard UI
+│       │   └── TeacherDashboard.jsx   # Teacher analytics UI
+│       │
+│       └── components/
+│           └── Chatbot.jsx            # AI doubt-solving chatbot
+│
+├── ml/
+│   ├── train_models.py         # ML training and model saving script
+│   └── saved_models/
+│       ├── regressor.pkl       # Gradient Boosting final score predictor
+│       ├── classifier.pkl      # Random Forest at-risk classifier
+│       └── scaler.pkl          # StandardScaler
+│
+└── README.md                   # Project documentation
+
+
 
