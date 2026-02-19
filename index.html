@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NeuroNetics SmartEdu</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --border: #1e2d45;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warn: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --mono: 'Space Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+#root { min-height: 100vh; }
+
+/* Layout */
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 240px; background: var(--surface); border-right: 1px solid var(--border);
+  padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+}
+.main { flex: 1; overflow: hidden; }
+
+/* Logo */
+.logo { padding: 0 8px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.logo-title { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+.logo-sub { font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 2px; text-transform: uppercase; }
+
+/* Nav */
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500;
+  color: var(--muted); transition: all .2s; border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: rgba(0, 212, 255, 0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+.nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-group-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; padding: 12px 12px 4px; }
+
+/* Page header */
+.page-header {
+  padding: 32px 32px 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.page-title { font-family: var(--mono); font-size: 22px; font-weight: 700; }
+.page-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+/* Cards */
+.content { padding: 24px 32px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+}
+.card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 4px; font-family: var(--mono); }
+.card-value { font-size: 32px; font-weight: 700; font-family: var(--mono); }
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Form */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .5px; }
+.form-input {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 14px;
+  font-family: var(--sans); outline: none; transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--muted); }
+
+/* Buttons */
+.btn {
+  padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: all .2s; font-family: var(--sans);
+}
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { background: #00b8d9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* Badges */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600;
+}
+.badge-danger { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid rgba(239,68,68,.3); }
+.badge-success { background: rgba(34,197,94,.15); color: var(--success); border: 1px solid rgba(34,197,94,.3); }
+.badge-warn { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid rgba(245,158,11,.3); }
+.badge-info { background: rgba(0,212,255,.15); color: var(--accent); border: 1px solid rgba(0,212,255,.3); }
+
+/* Score bar */
+.score-bar { background: var(--surface2); border-radius: 100px; height: 6px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+
+/* Table */
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+.table td { padding: 12px 12px; border-bottom: 1px solid rgba(30,45,69,.5); }
+.table tr:hover td { background: var(--surface2); }
+
+/* Chat */
+.chat-container { display: flex; flex-direction: column; height: calc(100vh - 120px); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.chat-msg { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+.chat-msg.user { align-self: flex-end; background: var(--accent); color: #000; border-radius: 12px 12px 2px 12px; }
+.chat-msg.bot { align-self: flex-start; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px 12px 12px 2px; }
+.chat-input-row { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.chat-input { flex: 1; }
+.bot-name { font-size: 11px; color: var(--accent); font-family: var(--mono); margin-bottom: 4px; }
+
+/* Pulse dot */
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-danger { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+.dot-success { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+/* Result card */
+.result-panel {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+  margin-top: 16px; animation: slideIn .3s ease;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Metric ring */
+.ring-wrap { display: flex; flex-direction: column; align-items: center; }
+.ring-label { font-size: 11px; color: var(--muted); margin-top: 6px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* Section title */
+.section-title { font-family: var(--mono); font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+
+/* Tag */
+.tag { background: rgba(124,58,237,.2); color: #a78bfa; border: 1px solid rgba(124,58,237,.3); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
+
+/* Notification banner */
+.banner { border-radius: 10px; padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.banner-warn { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); color: var(--warn); }
+.banner-success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: var(--success); }
+.banner-info { background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.3); color: var(--accent); }
+
+/* Loading spinner */
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,.3); border-top-color: #000; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Stat accent line */
+.card-accent { height: 3px; border-radius: 3px; margin-bottom: 16px; }
+
+/* Chart bar */
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-name { width: 80px; font-size: 12px; color: var(--muted); }
+.bar-track { flex: 1; background: var(--surface2); border-radius: 100px; height: 8px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 100px; }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ── SVG Icons ────────────────────────────────────────────────────────────────
+const Icon = ({ path, size=18, color='currentColor' }) =>
+  React.createElement('svg', { width:size, height:size, viewBox:'0 0 24 24', fill:'none',
+    stroke:color, strokeWidth:2, strokeLinecap:'round', strokeLinejoin:'round' },
+    React.createElement('path', { d: path }));
+
+const icons = {
+  student: 'M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z',
+  teacher: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm8 4v6m3-3h-6',
+  chat: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+  chart: 'M18 20V10M12 20V4M6 20v-6',
+  brain: 'M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-1.07-4.11A3 3 0 1 1 9.5 2M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 1.07-4.11A3 3 0 1 0 14.5 2',
+  alert: 'M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z M12 9v4 M12 17h.01',
+  check: 'M20 6L9 17l-5-5',
+  send: 'M22 2L11 13 M22 2l-7 20-4-9-9-4 20-7z',
+  user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8',
+  book: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
+  zap: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',
+  target: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+};
+
+// ── Circular score gauge ──────────────────────────────────────────────────────
+function ScoreGauge({ value, max=100, color, label, size=90 }) {
+  const r = size/2 - 8;
+  const circ = 2 * Math.PI * r;
+  const pct = Math.min(value / max, 1);
+  const dash = circ * pct;
+  return React.createElement('div', { className:'ring-wrap' },
+    React.createElement('svg', { width:size, height:size, viewBox:`0 0 ${size} ${size}` },
+      React.createElement('circle', { cx:size/2, cy:size/2, r, stroke:'#1a2235', strokeWidth:7, fill:'none' }),
+      React.createElement('circle', {
+        cx:size/2, cy:size/2, r, stroke:color, strokeWidth:7, fill:'none',
+        strokeDasharray:`${dash} ${circ}`, strokeDashoffset:0,
+        strokeLinecap:'round', transform:`rotate(-90 ${size/2} ${size/2})`,
+        style:{ transition:'stroke-dasharray 1s ease' }
+      }),
+      React.createElement('text', { x:size/2, y:size/2, textAnchor:'middle', dominantBaseline:'middle',
+        fill:'#e2e8f0', fontSize:16, fontWeight:700, fontFamily:'Space Mono' },
+        Math.round(value)),
+    ),
+    React.createElement('div', { className:'ring-label' }, label)
+  );
+}
+
+// ── Bar chart ─────────────────────────────────────────────────────────────────
+function BarChart({ data }) {
+  const colors = ['#00d4ff','#7c3aed','#22c55e','#f59e0b'];
+  return React.createElement('div', { className:'bar-chart' },
+    data.map(({ label, value, max=100 }, i) =>
+      React.createElement('div', { className:'bar-row', key:label },
+        React.createElement('div', { className:'bar-name' }, label),
+        React.createElement('div', { className:'bar-track' },
+          React.createElement('div', { className:'bar-fill',
+            style:{ width:`${(value/max)*100}%`, background: value < 60 ? '#ef4444' : colors[i] } })),
+        React.createElement('span', { style:{ fontSize:12, color: value<60 ? '#ef4444' : '#64748b', fontFamily:'Space Mono', width:32, textAlign:'right' } }, value)
+      )
+    )
+  );
+}
+
+// ── Stat Card ──────────────────────────────────────────────────────────────────
+function StatCard({ title, value, sub, color='#00d4ff', icon }) {
+  return React.createElement('div', { className:'card', style:{ position:'relative', overflow:'hidden' } },
+    React.createElement('div', { className:'card-accent', style:{ background: color } }),
+    React.createElement('div', { className:'card-title' }, title),
+    React.createElement('div', { className:'card-value', style:{ color } }, value),
+    sub && React.createElement('div', { style:{ fontSize:12, color:'#64748b', marginTop:4 } }, sub),
+    icon && React.createElement('div', { style:{ position:'absolute', right:16, top:16, opacity:.1, fontSize:48 } }, icon)
+  );
+}
+
+// ── Mock API (simulates FastAPI backend) ──────────────────────────────────────
+let mockDB = [
+  { id:1, name:'Priya Sharma', quiz:82, attendance:91, study_time:6, math_score:85, science_score:45, english_score:78, history_score:62, final:81.2, risk:'Safe' },
+  { id:2, name:'Rahul Das', quiz:48, attendance:55, study_time:2, math_score:40, science_score:38, english_score:50, history_score:45, final:49.3, risk:'At-Risk' },
+  { id:3, name:'Ananya Roy', quiz:76, attendance:88, study_time:5, math_score:72, science_score:80, english_score:55, history_score:90, final:77.1, risk:'Safe' },
+];
+let nextId = 4;
+
+const API = {
+  predict: async (data) => {
+    await new Promise(r => setTimeout(r, 900));
+    const { quiz, attendance, study_time, math_score, science_score, english_score, history_score, name } = data;
+    const final = Math.min(100, Math.max(0, 0.45*quiz + 0.30*attendance + 0.25*study_time*5 + (Math.random()-0.5)*8));
+    const risk = (final < 60 || attendance < 60) ? 'At-Risk' : 'Safe';
+    const risk_probability = risk==='At-Risk' ? 60+Math.random()*35 : 5+Math.random()*30;
+    const weak_topics = [];
+    const scores = { Math: math_score, Science: science_score, English: english_score, History: history_score };
+    Object.entries(scores).forEach(([t,s]) => { if(s < 60) weak_topics.push(t); });
+    const recommendations = [];
+    if(attendance < 70) recommendations.push('Attendance below 70% — attend more classes regularly.');
+    if(study_time < 4) recommendations.push('Increase daily study time to at least 4 hours.');
+    if(quiz < 60) recommendations.push('Review quiz material; low quiz scores reveal concept gaps.');
+    weak_topics.forEach(t => recommendations.push(`Focus on ${t} — score below 60%, needs immediate attention.`));
+    if(!recommendations.length) recommendations.push('Excellent! Keep maintaining your current study habits.');
+    const student = { id:nextId++, name, quiz, attendance, study_time, math_score, science_score, english_score, history_score, final:Math.round(final*10)/10, risk };
+    mockDB.push(student);
+    return { student_id:student.id, predicted_final:student.final, risk, risk_probability:Math.round(risk_probability*10)/10, weak_topics, recommendations };
+  },
+  students: async () => { await new Promise(r => setTimeout(r,300)); return [...mockDB]; },
+  chat: async ({ message, student_name }) => {
+    await new Promise(r => setTimeout(r, 600));
+    const msg = message.toLowerCase();
+    const name = student_name || 'Student';
+    const replies = [
+      [['hello','hi','hey'], `Hello ${name}! 👋 I'm NeuroBuddy, your AI tutor. Ask me about study tips, subjects, or exam strategies!`],
+      [['math'], `For math, ${name} — practice daily problem sets and visualize concepts. Try Khan Academy for structured lessons!`],
+      [['science'], `Science comes alive when you connect theory to real life, ${name}. Watch CrashCourse on YouTube!`],
+      [['history'], `History is all about connecting events, ${name}. Build timelines and use documentaries to make it vivid.`],
+      [['english','writing'], `For English, ${name}, read widely and write a little every day. The Hemingway App helps with clarity.`],
+      [['study','how','tips'], `Try Pomodoro: 25 mins focused → 5 min break, ${name}. Repeat 4x then take a longer break. Works like magic! ⏱️`],
+      [['exam','test','quiz'], `Exam tip for ${name}: review notes within 24h of class, do past papers, and get 8h sleep before the test!`],
+      [['stress','anxious','worried'], `It's okay to feel stressed, ${name}. Break tasks into tiny steps, breathe deeply, and celebrate small wins. 💪`],
+      [['weak','fail','bad','poor'], `Don't give up, ${name}! Identify which specific topics confuse you and ask your teacher for targeted help.`],
+      [['recommend'], `For best results, ${name}: 1) Address weak topics first, 2) Use spaced repetition, 3) Teach concepts back to yourself.`],
+    ];
+    for(const [keys, reply] of replies) {
+      if(keys.some(k => msg.includes(k))) return { reply };
+    }
+    return { reply: `Great question, ${name}! Break the topic into small parts, find examples, then teach it back to yourself — that's the Feynman technique! 🧠` };
+  },
+};
+
+// ── StudentDashboard ──────────────────────────────────────────────────────────
+function StudentDashboard() {
+  const [form, setForm] = useState({ name:'', quiz:'', attendance:'', study_time:'', math_score:'', science_score:'', english_score:'', history_score:'' });
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+
+  const handle = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const submit = async () => {
+    if(!form.name || !form.quiz || !form.attendance || !form.study_time) {
+      setError('Please fill in all required fields.'); return;
+    }
+    setError(''); setLoading(true);
+    try {
+      const data = {};
+      Object.entries(form).forEach(([k,v]) => data[k] = isNaN(v) ? v : parseFloat(v)||0);
+      const res = await API.predict(data);
+      setResult({ ...res, ...data });
+    } catch(e) { setError('Failed to connect to backend.'); }
+    setLoading(false);
+  };
+
+  const scoreColor = v => v >= 80 ? '#22c55e' : v >= 60 ? '#f59e0b' : '#ef4444';
+
+  return React.createElement('div', null,
+    React.createElement('div', { className:'page-header' },
+      React.createElement('div', null,
+        React.createElement('div', { className:'page-title' }, '⚡ Student Dashboard'),
+        React.createElement('div', { className:'page-sub' }, 'Submit your scores to get AI-powered predictions and study guidance')
+      )
+    ),
+    React.createElement('div', { className:'content' },
+      error && React.createElement('div', { className:'banner banner-warn' }, '⚠️ ', error),
+
+      React.createElement('div', { className:'grid grid-2', style:{ gap:24 } },
+        // Form
+        React.createElement('div', { className:'card' },
+          React.createElement('div', { className:'section-title' }, '📋 Enter Academic Data'),
+          React.createElement('div', { className:'grid', style:{ gap:14 } },
+            React.createElement('div', { className:'form-group' },
+              React.createElement('label', { className:'form-label' }, 'Full Name *'),
+              React.createElement('input', { className:'form-input', name:'name', placeholder:'e.g. Priya Sharma', value:form.name, onChange:handle })
+            ),
+            React.createElement('div', { className:'grid grid-2', style:{ gap:14 } },
+              ...['quiz','attendance','study_time'].map(field =>
+                React.createElement('div', { className:'form-group', key:field },
+                  React.createElement('label', { className:'form-label' }, {quiz:'Quiz Score (0-100) *', attendance:'Attendance % *', study_time:'Study Hours/Day *'}[field]),
+                  React.createElement('input', { className:'form-input', name:field, type:'number', min:0, max: field==='study_time'?24:100,
+                    placeholder: field==='study_time'?'e.g. 5':'e.g. 78', value:form[field], onChange:handle })
+                )
+              )
+            ),
+            React.createElement('hr', { className:'divider' }),
+            React.createElement('div', { className:'section-title' }, '📚 Subject Scores (optional)'),
+            React.createElement('div', { className:'grid grid-2', style:{ gap:14 } },
+              ...['math_score','science_score','english_score','history_score'].map(field =>
+                React.createElement('div', { className:'form-group', key:field },
+                  React.createElement('label', { className:'form-label' }, field.replace('_score','').replace(/^\w/, c=>c.toUpperCase()) + ' Score'),
+                  React.createElement('input', { className:'form-input', name:field, type:'number', min:0, max:100,
+                    placeholder:'0-100', value:form[field], onChange:handle })
+                )
+              )
+            ),
+            React.createElement('button', { className:'btn btn-primary', onClick:submit, disabled:loading, style:{ marginTop:8 } },
+              loading ? React.createElement('span', { className:'spinner' }) : '🔮',
+              loading ? ' Analyzing...' : 'Get AI Prediction'
+            )
+          )
+        ),
+
+        // Result
+        result ? React.createElement('div', { className:'card', style:{ display:'flex', flexDirection:'column', gap:20 } },
+          React.createElement('div', { className:'section-title' }, '🧠 AI Analysis Results'),
+          
+          React.createElement('div', { style:{ display:'flex', justifyContent:'space-evenly' } },
+            React.createElement(ScoreGauge, { value:result.predicted_final, color: scoreColor(result.predicted_final), label:'Predicted Final' }),
+            React.createElement(ScoreGauge, { value:result.risk_probability, color: result.risk==='At-Risk' ? '#ef4444':'#22c55e', label:'Risk Score %' }),
+          ),
+
+          React.createElement('div', { style:{ textAlign:'center' } },
+            React.createElement('span', { className:`badge badge-${result.risk==='At-Risk'?'danger':'success'}`, style:{ fontSize:14, padding:'6px 18px' } },
+              result.risk==='At-Risk' ? '🚨' : '✅', ' ', result.risk
+            )
+          ),
+
+          result.weak_topics.length > 0 && React.createElement('div', null,
+            React.createElement('div', { className:'section-title' }, '⚠️ Weak Topics'),
+            React.createElement('div', { style:{ display:'flex', flexWrap:'wrap', gap:8 } },
+              ...result.weak_topics.map(t => React.createElement('span', { key:t, className:'badge badge-danger' }, '📌 ', t))
+            )
+          ),
+
+          React.createElement('div', null,
+            React.createElement('div', { className:'section-title' }, '📌 Recommendations'),
+            React.createElement('div', { style:{ display:'flex', flexDirection:'column', gap:8 } },
+              ...result.recommendations.map((r,i) =>
+                React.createElement('div', { key:i, style:{ fontSize:13, display:'flex', gap:8, padding:'8px 12px', background:'#1a2235', borderRadius:8, alignItems:'flex-start' } },
+                  React.createElement('span', null, '→'),
+                  React.createElement('span', null, r)
+                )
+              )
+            )
+          ),
+
+          result.math_score && React.createElement('div', null,
+            React.createElement('div', { className:'section-title' }, '📊 Subject Breakdown'),
+            React.createElement(BarChart, { data:[
+              { label:'Math', value: parseFloat(form.math_score)||0 },
+              { label:'Science', value: parseFloat(form.science_score)||0 },
+              { label:'English', value: parseFloat(form.english_score)||0 },
+              { label:'History', value: parseFloat(form.history_score)||0 },
+            ]})
+          )
+        ) : React.createElement('div', { className:'card', style:{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:16, minHeight:300, textAlign:'center' } },
+          React.createElement('div', { style:{ fontSize:64 } }, '🎓'),
+          React.createElement('div', { style:{ fontSize:16, fontFamily:'Space Mono', color:'#64748b' } }, 'Awaiting your data...'),
+          React.createElement('div', { style:{ fontSize:13, color:'#374151', maxWidth:240 } }, 'Fill in the form and click "Get AI Prediction" to see personalized analysis')
+        )
+      )
+    )
+  );
+}
+
+// ── TeacherDashboard ──────────────────────────────────────────────────────────
+function TeacherDashboard() {
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sel, setSel] = useState(null);
+
+  useEffect(() => {
+    API.students().then(data => { setStudents(data); setLoading(false); });
+  }, []);
+
+  const total = students.length;
+  const atRisk = students.filter(s => s.risk==='At-Risk').length;
+  const avgFinal = total ? Math.round(students.reduce((a,s) => a + (s.final||0), 0) / total * 10)/10 : 0;
+  const avgAttendance = total ? Math.round(students.reduce((a,s) => a + s.attendance, 0) / total) : 0;
+
+  return React.createElement('div', null,
+    React.createElement('div', { className:'page-header' },
+      React.createElement('div', null,
+        React.createElement('div', { className:'page-title' }, '📊 Teacher Dashboard'),
+        React.createElement('div', { className:'page-sub' }, 'Monitor all students, risk levels, and class analytics')
+      )
+    ),
+    React.createElement('div', { className:'content' },
+      // Stats row
+      React.createElement('div', { className:'grid grid-4', style:{ marginBottom:24 } },
+        React.createElement(StatCard, { title:'Total Students', value:total, color:'#00d4ff' }),
+        React.createElement(StatCard, { title:'At Risk', value:atRisk, sub:`${total?Math.round(atRisk/total*100):0}% of class`, color:'#ef4444' }),
+        React.createElement(StatCard, { title:'Avg Final Score', value:avgFinal, color:'#22c55e' }),
+        React.createElement(StatCard, { title:'Avg Attendance', value:`${avgAttendance}%`, color:'#f59e0b' }),
+      ),
+
+      React.createElement('div', { className:'grid grid-2', style:{ gap:24 } },
+        // Student table
+        React.createElement('div', { className:'card', style:{ overflow:'auto' } },
+          React.createElement('div', { className:'section-title' }, '👥 Student Roster'),
+          loading ? React.createElement('div', { style:{ textAlign:'center', padding:40, color:'#64748b' } }, '⏳ Loading...') :
+          React.createElement('table', { className:'table' },
+            React.createElement('thead', null,
+              React.createElement('tr', null,
+                ['Name','Quiz','Attend%','Final','Risk'].map(h =>
+                  React.createElement('th', { key:h }, h))
+              )
+            ),
+            React.createElement('tbody', null,
+              ...students.map(s =>
+                React.createElement('tr', { key:s.id, onClick:()=>setSel(s), style:{ cursor:'pointer', background: sel?.id===s.id ? 'rgba(0,212,255,.05)' : '' } },
+                  React.createElement('td', null, React.createElement('strong', null, s.name)),
+                  React.createElement('td', { style:{ fontFamily:'Space Mono', fontSize:12 } }, s.quiz),
+                  React.createElement('td', null,
+                    React.createElement('span', { style:{ color: s.attendance < 70 ? '#ef4444' : '#22c55e', fontFamily:'Space Mono', fontSize:12 } }, s.attendance+'%')
+                  ),
+                  React.createElement('td', { style:{ fontFamily:'Space Mono', fontSize:12 } }, s.final?.toFixed(1)||'-'),
+                  React.createElement('td', null,
+                    React.createElement('span', { className:`badge badge-${s.risk==='At-Risk'?'danger':'success'}` },
+                      s.risk==='At-Risk'?'🚨':'✅', ' ', s.risk)
+                  )
+                )
+              )
+            )
+          )
+        ),
+
+        // Detail / Analytics
+        sel ? React.createElement('div', { className:'card' },
+          React.createElement('div', { className:'section-title' }, '📋 ' + sel.name),
+          React.createElement('div', { style:{ display:'flex', justifyContent:'space-evenly', marginBottom:20 } },
+            React.createElement(ScoreGauge, { value:sel.final||0, color: sel.final>=60?'#22c55e':'#ef4444', label:'Final Score', size:80 }),
+            React.createElement(ScoreGauge, { value:sel.attendance, color: sel.attendance>=70?'#22c55e':'#ef4444', label:'Attendance', size:80 }),
+            React.createElement(ScoreGauge, { value:sel.quiz, color: sel.quiz>=60?'#00d4ff':'#ef4444', label:'Quiz Score', size:80 }),
+          ),
+          React.createElement('div', { className:'section-title' }, '📚 Subject Scores'),
+          React.createElement(BarChart, { data:[
+            { label:'Math', value:sel.math_score||0 },
+            { label:'Science', value:sel.science_score||0 },
+            { label:'English', value:sel.english_score||0 },
+            { label:'History', value:sel.history_score||0 },
+          ]}),
+          React.createElement('hr', { className:'divider' }),
+          React.createElement('div', { style:{ display:'flex', flexWrap:'wrap', gap:8 } },
+            [['math_score','Math'],['science_score','Science'],['english_score','English'],['history_score','History']].map(([k,label]) =>
+              (sel[k]||0) < 60 ? React.createElement('span', { key:k, className:'badge badge-danger' }, '⚠️ Weak: '+label) : null
+            ).filter(Boolean)
+          )
+        ) :
+        React.createElement('div', { className:'card' },
+          React.createElement('div', { className:'section-title' }, '📊 Class Overview'),
+          React.createElement('div', { style:{ marginBottom:20 } },
+            React.createElement(BarChart, { data:[
+              { label:'Avg Quiz', value: total?Math.round(students.reduce((a,s)=>a+s.quiz,0)/total):0 },
+              { label:'Avg Attend', value: avgAttendance },
+              { label:'Avg Final', value: avgFinal },
+            ]})
+          ),
+          React.createElement('hr', { className:'divider' }),
+          React.createElement('div', { className:'section-title', style:{marginBottom:12} }, '🚨 Risk Distribution'),
+          React.createElement('div', { style:{ display:'flex', gap:16, alignItems:'center' } },
+            React.createElement('div', { style:{ flex:1, background:'#1a2235', borderRadius:12, height:12, overflow:'hidden' } },
+              React.createElement('div', { style:{ height:'100%', width:`${total?atRisk/total*100:0}%`, background:'#ef4444', borderRadius:12 } })
+            ),
+            React.createElement('span', { style:{ fontSize:12, fontFamily:'Space Mono', color:'#ef4444', whiteSpace:'nowrap' } }, atRisk+'/'+total+' at risk')
+          ),
+          React.createElement('div', { style:{ marginTop:16, fontSize:13, color:'#64748b' } }, '← Click any student to view their detailed profile')
+        )
+      )
+    )
+  );
+}
+
+// ── Chatbot ───────────────────────────────────────────────────────────────────
+function Chatbot() {
+  const [messages, setMessages] = useState([
+    { role:'bot', text:'Hello! I\'m NeuroBuddy 🧠, your AI study companion. Ask me about study tips, specific subjects, exam strategies, or anything academic!' }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('Student');
+  const endRef = useRef(null);
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior:'smooth' }); }, [messages]);
+
+  const send = async () => {
+    if(!input.trim() || loading) return;
+    const msg = input.trim();
+    setInput('');
+    setMessages(m => [...m, { role:'user', text:msg }]);
+    setLoading(true);
+    const res = await API.chat({ message:msg, student_name:name });
+    setMessages(m => [...m, { role:'bot', text:res.reply }]);
+    setLoading(false);
+  };
+
+  const suggestions = ['How do I study better?', 'Help me with Math', 'Exam tips', 'I\'m feeling stressed'];
+
+  return React.createElement('div', null,
+    React.createElement('div', { className:'page-header' },
+      React.createElement('div', null,
+        React.createElement('div', { className:'page-title' }, '🤖 AI Tutor Chat'),
+        React.createElement('div', { className:'page-sub' }, 'Powered by NeuroBuddy — your intelligent study companion')
+      ),
+      React.createElement('div', { style:{ display:'flex', gap:8, alignItems:'center' } },
+        React.createElement('span', { style:{ fontSize:12, color:'#64748b' } }, 'Your name:'),
+        React.createElement('input', { className:'form-input', value:name, onChange:e=>setName(e.target.value), style:{ width:140, padding:'6px 10px' } })
+      )
+    ),
+    React.createElement('div', { className:'content', style:{ paddingTop:16 } },
+      React.createElement('div', { className:'card', style:{ padding:0, overflow:'hidden', height:'calc(100vh - 200px)', display:'flex', flexDirection:'column' } },
+        // Suggestions
+        React.createElement('div', { style:{ padding:'12px 16px', borderBottom:'1px solid #1e2d45', display:'flex', gap:8, flexWrap:'wrap' } },
+          ...suggestions.map(s =>
+            React.createElement('button', { key:s, className:'btn btn-ghost btn-sm', onClick:()=>{ setInput(s); } }, s)
+          )
+        ),
+        // Messages
+        React.createElement('div', { ref:endRef, style:{ flex:1, overflowY:'auto', padding:'16px 20px', display:'flex', flexDirection:'column', gap:12 } },
+          ...messages.map((m,i) =>
+            React.createElement('div', { key:i, className:`chat-msg ${m.role}` },
+              m.role==='bot' && React.createElement('div', { className:'bot-name' }, '🧠 NeuroBuddy'),
+              m.text
+            )
+          ),
+          loading && React.createElement('div', { className:'chat-msg bot' },
+            React.createElement('div', { className:'bot-name' }, '🧠 NeuroBuddy'),
+            React.createElement('div', { style:{ display:'flex', gap:4 } },
+              ...[0,1,2].map(i => React.createElement('div', { key:i, style:{ width:6, height:6, borderRadius:'50%', background:'#00d4ff', animation:`pulse 1.2s ${i*0.2}s infinite` } }))
+            )
+          ),
+          React.createElement('div', { ref:endRef })
+        ),
+        // Input
+        React.createElement('div', { style:{ padding:'12px 16px', borderTop:'1px solid #1e2d45', display:'flex', gap:10 } },
+          React.createElement('input', {
+            className:'form-input chat-input', placeholder:'Ask NeuroBuddy anything...', value:input,
+            onChange:e=>setInput(e.target.value),
+            onKeyDown:e=>{ if(e.key==='Enter') send(); }
+          }),
+          React.createElement('button', { className:'btn btn-primary', onClick:send, disabled:loading },
+            loading ? React.createElement('span', { className:'spinner' }) : '➤'
+          )
+        )
+      )
+    )
+  );
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+function App() {
+  const [page, setPage] = useState('student');
+
+  const navItems = [
+    { id:'student', label:'Student View', icon:'student', group:'Dashboards' },
+    { id:'teacher', label:'Teacher View', icon:'teacher', group:'Dashboards' },
+    { id:'chat',    label:'AI Tutor Chat', icon:'chat', group:'Tools' },
+  ];
+
+  const groups = [...new Set(navItems.map(n => n.group))];
+
+  return React.createElement('div', { className:'layout' },
+    // Sidebar
+    React.createElement('aside', { className:'sidebar' },
+      React.createElement('div', { className:'logo' },
+        React.createElement('div', { className:'logo-title' }, 'NEURONETICS'),
+        React.createElement('div', { className:'logo-sub' }, 'Smart Education AI')
+      ),
+      ...groups.map(group =>
+        React.createElement('div', { key:group },
+          React.createElement('div', { className:'nav-group-label' }, group),
+          ...navItems.filter(n => n.group===group).map(item =>
+            React.createElement('button', {
+              key: item.id, className:`nav-item${page===item.id?' active':''}`,
+              onClick: () => setPage(item.id)
+            },
+              React.createElement('span', null, { student:'🎓', teacher:'📊', chart:'📈', chat:'💬' }[item.id] || '📄'),
+              item.label
+            )
+          )
+        )
+      ),
+      React.createElement('div', { style:{ marginTop:'auto', padding:'12px', background:'#1a2235', borderRadius:8, fontSize:11, color:'#64748b', lineHeight:1.6 } },
+        React.createElement('div', { style:{ color:'#00d4ff', fontFamily:'Space Mono', marginBottom:4, fontSize:10 } }, '⚡ SYSTEM STATUS'),
+        '🟢 ML Models Active',
+        React.createElement('br'), '🟢 FastAPI Backend Ready',
+        React.createElement('br'), '🟢 SQLite Connected',
+        React.createElement('br'), '🧠 NLP Tutor Online',
+      )
+    ),
+
+    // Main
+    React.createElement('main', { className:'main' },
+      page==='student' && React.createElement(StudentDashboard),
+      page==='teacher' && React.createElement(TeacherDashboard),
+      page==='chat'    && React.createElement(Chatbot),
+    )
+  );
+}
+
+// ── Typing dots animation ─────────────────────────────────────────────────────
+const style = document.createElement('style');
+style.textContent = `@keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1)} }`;
+document.head.appendChild(style);
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
