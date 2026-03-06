@@ -286,5 +286,11 @@ NeuroNetics-SmartEdu/
 │
 └── README.md                   # Project documentation
 
+# ScreenShots
+<img width="1866" height="870" alt="Screenshot 2026-03-06 192448" src="https://github.com/user-attachments/assets/1a787c07-8408-4e65-b7dd-b9efe70742bf" />
+<img width="1883" height="875" alt="Screenshot 2026-03-06 192457" src="https://github.com/user-attachments/assets/80b75b5a-6e47-4642-92f4-bba57e0a1dda" />
+<img width="1893" height="880" alt="Screenshot 2026-03-06 192516" src="https://github.com/user-attachments/assets/5279c729-174b-448c-bf89-ad749dd6eb15" />
+
+
 
 
